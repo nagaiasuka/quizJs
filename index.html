@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&display=swap" rel="stylesheet">
     <title>ちいかわQUIZ</title>
     <style>
-        body{
+        body {
             font-family: 'Hachi Maru Pop', cursive;
         }
     </style>
@@ -34,11 +34,15 @@
             <div class="card-body">
                 <h5 class="card-title">地位皮の好物はどれ？</h5>
                 <div class="row d-flex justify-content-center p-3">
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button" value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button" value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button" value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button" value="おにぎり"></div>
-                
+                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
+                            value="おにぎり"></div>
+                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
+                            value="おにぎり"></div>
+                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
+                            value="おにぎり"></div>
+                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
+                            value="おにぎり"></div>
+
                 </div>
                 <div>
                     <p class="card-text">ちゃりめら</p>
@@ -46,6 +50,7 @@
                 </div>
             </div>
         </div>
+        <button onclick="test()">test</button>
 
 
     </div>
@@ -63,6 +68,53 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
+    <script>
+        function test() {
+            // CSVファイルを取得
+            let csv = new XMLHttpRequest();
+
+            // CSVファイルへのパス
+            csv.open("GET", "quizData.csv", true);
+
+            // CSVファイル読み込み成功時の処理
+            csv.onload = function () {
+                if (csv.status === 200) {
+                    console.log(csv.responseText);
+
+                    // 配列を定義
+                    let csvArray = [];
+
+                    // 改行ごとに配列化
+                    let lines = csv.responseText.split(/\r\n|\n/);
+                    console.log(lines.length);
+
+                    // 1行ごとに処理
+                    for (let i = 0; i < lines.length; ++i) {
+                        let cells = lines[i].split(",");
+                        if (cells.length != 1) {
+                            csvArray.push(cells);
+                        }
+                    }
+
+                    // CSVデータが処理された後に何か他の操作を行いたい場合は、ここに追加してください。
+                } else {
+                    console.error("CSVファイルの読み込みに失敗しました。");
+                }
+            };
+
+            // CSVファイル読み込み失敗時の処理
+            csv.onerror = function () {
+                console.error("CSVファイルの読み込みに失敗しました。");
+            };
+
+            // CSVファイルをリクエスト送信
+            csv.send(null);
+        }
+
+
+
+
+    </script>
 </body>
 
 </html>
