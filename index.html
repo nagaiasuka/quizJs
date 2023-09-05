@@ -29,30 +29,11 @@
     </div>
 
     <div class="container">
-        <div class="card my-3">
-            <h5 class="card-header">問1</h5>
-            <div class="card-body">
-                <h5 class="card-title">地位皮の好物はどれ？</h5>
-                <div class="row d-flex justify-content-center p-3">
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
-                            value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
-                            value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
-                            value="おにぎり"></div>
-                    <div class="col-md-3 my-1 text-center"><input class="w-75 btn btn-outline-info" type="button"
-                            value="おにぎり"></div>
+        
+        <div id="parentContainer">
 
-                </div>
-                <div>
-                    <p class="card-text">ちゃりめら</p>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>
         </div>
         <button onclick="test()">test</button>
-
-
     </div>
     <footer class="text-center bg-info m-0">
         <p class="p-2 m-0">ちいかわQUIZ</p>
@@ -69,34 +50,45 @@
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
     <script>
+
+
         function test() {
+            getQuizData(function (csvArrays) {
+                // getQuizDataからデータを取得した後にここでデータを使う
+                for(let i = 0;i < csvArrays.length; i++){
+                    crateDom(i,csvArrays[i]);
+                }
+            });
+        }
+
+
+        function getQuizData(callback) {
             // CSVファイルを取得
             let csv = new XMLHttpRequest();
 
             // CSVファイルへのパス
             csv.open("GET", "quizData.csv", true);
 
+
+            let csvArrays = [];
             // CSVファイル読み込み成功時の処理
             csv.onload = function () {
                 if (csv.status === 200) {
-                    console.log(csv.responseText);
-
-                    // 配列を定義
-                    let csvArray = [];
 
                     // 改行ごとに配列化
                     let lines = csv.responseText.split(/\r\n|\n/);
-                    console.log(lines.length);
 
                     // 1行ごとに処理
                     for (let i = 0; i < lines.length; ++i) {
+                        let csvArray = [];
                         let cells = lines[i].split(",");
-                        if (cells.length != 1) {
-                            csvArray.push(cells);
-                        }
-                    }
 
-                    // CSVデータが処理された後に何か他の操作を行いたい場合は、ここに追加してください。
+                        for (let j = 0; j < cells.length; ++j) {
+                            csvArray.push(cells[j]);
+                        }
+                        csvArrays.push(csvArray);
+                    }
+                    callback(csvArrays);
                 } else {
                     console.error("CSVファイルの読み込みに失敗しました。");
                 }
@@ -111,7 +103,53 @@
             csv.send(null);
         }
 
+        function crateDom(i,csvArrays) {
+            // 親要素を取得
+            const parentElement = document.getElementById('parentContainer'); // 適切な親要素のIDを指定してください
 
+            // 新しいカード要素を作成
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card my-3';
+            
+            // 問題
+            var quiz = csvArrays[0];
+            // 選択肢1
+            var choices1 = csvArrays[1];
+            // 選択肢2
+            var choices2 = csvArrays[2];
+            // 選択肢3
+            var choices3 = csvArrays[3];
+            // 選択肢4
+            var choices4 = csvArrays[4];
+
+            // 答え
+            var answerInt = csvArrays[5];
+            var answer = eval('choices' + answerInt);
+            // 解説文
+            var answerText = csvArrays[6];
+
+            // カード内のコンテンツを設定
+            cardDiv.innerHTML = `
+                <h5 class="card-header">問${i + 1}</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Q.${quiz}</h5>
+                    <div class="row d-flex justify-content-center p-3">
+                        <div class="col-md-3 my-1 text-center"><button class="w-75 btn btn-outline-info" type="button" value="1">${choices1}</button></div>
+                        <div class="col-md-3 my-1 text-center"><button class="w-75 btn btn-outline-info" type="button" value="2">${choices2}</button></div>
+                        <div class="col-md-3 my-1 text-center"><button class="w-75 btn btn-outline-info" type="button" value="3">${choices3}</button></div>
+                        <div class="col-md-3 my-1 text-center"><button class="w-75 btn btn-outline-info" type="button" value="4">${choices4}</button></div>
+                    </div>
+                    <div>
+                        <p class="card-text text-danger">A.${answer}</p>
+                        <p class="card-text">${answerText}</p>
+                    </div>
+                </div>
+            `;
+
+            // 親要素にカードを追加
+            parentElement.appendChild(cardDiv);
+            
+        }
 
 
     </script>
